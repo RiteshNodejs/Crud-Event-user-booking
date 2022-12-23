@@ -34,6 +34,10 @@ const eventSchema =new Schema({
         type:String,
         required:false
     },
+    isDeleted:{
+        type:Boolean,
+        default:false
+    }
 
 },{timestamps:true})
 let eventDb =mongoose.model('event',eventSchema)

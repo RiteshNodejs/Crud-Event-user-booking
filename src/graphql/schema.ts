@@ -1,4 +1,4 @@
- const typeDefs = `#graphql
+const typeDefs = `#graphql
  type user {
     id:ID,
     firstName:String,
@@ -47,16 +47,23 @@
  type token{
   Token:String
  }
- type booking{
-  by:String,
+ type allEvent {
+  title:String,
+  description:String,
   venue:String,
   eventTime:Float,
   city:String,
+  state:String
+ }
+ type booking{
+  userId:String
 }
 
   type Query {
     hello: String,
     getEventToken(id:ID):token
+    findEvent:[allEvent],
+    allBookingList:[booking]
   }
 
   input userInput {
@@ -109,5 +116,4 @@
   }  
 `;
 
-
-export default typeDefs
+export default typeDefs;

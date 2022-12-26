@@ -56,14 +56,19 @@ const typeDefs = `#graphql
   state:String
  }
  type booking{
-  userId:String
+  _id:ID
+  description:String,
+  venue:String,
+  eventTime:Float,
+  city:String,
+  state:String
 }
 
   type Query {
     hello: String,
     getEventToken(id:ID):token
     findEvent:[allEvent],
-    allBookingList:[booking]
+    allBookingList(eventId:String):[booking]
   }
 
   input userInput {
@@ -103,7 +108,7 @@ const typeDefs = `#graphql
     id:ID
    }
   input bookingInput{
-    by:[Role]
+    eventId:String
   }
   type Mutation{
     signUpUser(user:userInput):user,
@@ -113,6 +118,7 @@ const typeDefs = `#graphql
     eventUpdate(updateEvent:eventUpdateInput):updateEvent,
     deleteEvent(deleteEvent:deleteEventInput):deleteEvent,
     addBooking(booking:bookingInput):booking
+  
   }  
 `;
 

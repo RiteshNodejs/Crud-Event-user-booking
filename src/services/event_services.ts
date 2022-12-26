@@ -34,19 +34,25 @@ class EventServices {
   }
   async updateEvent(parent, args, context) {
     AuthValidation.Validattion(parent, args, context)
-    
     if (context.user.role == "user") {
       throw new Error("Access denied not for users");
     }
     const idUser = context.user._id;
-    const booked = bookingDb.find({userId:idUser})
-    if(booked){
-      throw new Error ("unable to delete ")
+    const booked = await bookingDb.aggregate(
+    [
+      {
+        '$match': {
+          'userId': idUser
+        }
+      }
+    ])
+    if(booked.length>1 ){
+      throw new Error ("unable to update ")
     }
     // const user = await userDb.findOne({ _id: idUser });
     const managerid = args.updateEvent.id;
     // const manager = await eventDb.findById(managerid);
-   
+   console.log(managerid)
     const argsData = {
       title: args.updateEvent.title,
       description: args.updateEvent.description,
@@ -69,16 +75,25 @@ class EventServices {
   }
   async deleteEvent(parent, args, context) {
     AuthValidation.Validattion(parent, args, context)
+    /// check for user 
     if (context.user.role == "user") {
       throw new Error("Access denied not for users");
     }
     const idUser = context.user._id;
-    const booked = bookingDb.find({userId:idUser})
+    const managerid = args.deleteEvent.id;
+    //   check for event owner (manager) 
+    if(context.user.role === 'manager'){
+      const ownManager =await eventDb.findOne({_id:managerid ,userId:idUser})
+      if(ownManager === null){
+        throw new Error ("Access denied by manager")
+      }
+    }
+    //check if event is booked then cant be deleted
+    const booked = await bookingDb.findOne({eventId:managerid})
     if(booked){
       throw new Error ("unable to delete ")
     }
-    const managerid = args.deleteEvent.id;
-    console.log(managerid)
+   
     const delEvent = await eventDb.findByIdAndUpdate(managerid,{isDeleted:true});
     console.log(delEvent)
     return {};
